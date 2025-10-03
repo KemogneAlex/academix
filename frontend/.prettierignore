@@ -1,0 +1,15 @@
+.next
+node_modules
+public
+build
+dist
+*.md
+*.json
+*.yaml
+*.yml
+*.html
+*.lock
+*.log
+*.cache
+.DS_Store
+.env
