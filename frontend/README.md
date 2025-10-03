@@ -197,6 +197,15 @@ VITE_APP_DEBUG=true
 
 Les contributions sont les bienvenues ! Veuillez lire les directives de contribution avant de soumettre une pull request.
 
+## 📚 Ressources Utiles
+
+- [React Icons](https://react-icons.github.io/react-icons/) - Bibliothèque d'icônes pour React
+- [React Bootstrap - Modal](https://react-bootstrap.netlify.app/docs/components/modal/) - Documentation des modales React Bootstrap
+- [React Bootstrap - Accordion](https://react-bootstrap.netlify.app/docs/components/accordion/#examples) - Documentation des accordéons React Bootstrap
+- [Jodit React](https://github.com/jodit/jodit-react) - Éditeur de texte riche pour React
+- [React Player](https://www.npmjs.com/package/react-player) - Lecteur vidéo pour React
+- [React Simple Star Rating](https://www.npmjs.com/package/react-simple-star-rating) - Composant d'évaluation par étoiles
+
 ## 📄 Licence
 
 Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus d'informations.
