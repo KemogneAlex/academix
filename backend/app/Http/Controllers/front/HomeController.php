@@ -125,7 +125,9 @@ class HomeController extends Controller
     }
 
     public function course($slug){
+        // Accepte slug OU id (fallback pour anciens cours sans slug)
         $course = Course::where('slug', $slug)
+                        ->orWhere('id', is_numeric($slug) ? $slug : 0)
         ->withCount('enrollments')
         ->withCount('reviews')
         ->withSum('reviews', 'rating')
