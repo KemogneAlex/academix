@@ -14,6 +14,7 @@ use App\Models\Activity;
 use App\Models\Chapter;
 use App\Models\Lesson;
 use App\Models\Review;
+use App\Models\Certificate;
 
 
 class AccountController extends Controller
@@ -339,12 +340,21 @@ public function markAsComplete(Request $request){
     $totalLessons = $course->chapters->sum('lessons_count');
     $progress = round(($completedLessonsCount / $totalLessons) * 100);
 
+    // Génère le certificat si cours 100% complété
+    $certificate = null;
+    if ($progress >= 100) {
+        $certificate = CertificateController::generateIfCompleted(
+            $request->user()->id,
+            $request->course_id
+        );
+    }
 
     return response()->json([
-        'status' => '200',
-        'progress' => $progress,
+        'status'           => '200',
+        'progress'         => $progress,
         'completedLessons' => $completedLessons,
-        'message' => 'Le cours a été marqué comme terminé avec succès'
+        'certificate'      => $certificate,
+        'message'          => 'Le cours a été marqué comme terminé avec succès'
     ], 200);
 }
 
@@ -401,8 +411,10 @@ public function updateUser(Request $request){
         ], 404);
     }
     $validator = Validator::make($request->all(), [
-        'name' => 'required',
-        'email' => 'required|email|unique:users,email,'.$request->user()->id, 'id'
+        'name'  => 'required',
+        'email' => 'required|email|unique:users,email,'.$request->user()->id,
+        'phone' => 'nullable|string|max:20',
+        'bio'   => 'nullable|string|max:1000',
     ]);
     if ($validator->fails()) {
         return response()->json([
@@ -410,8 +422,10 @@ public function updateUser(Request $request){
             'message' => $validator->errors()
         ], 400);
     }
-    $user->name = $request->name;
+    $user->name  = $request->name;
     $user->email = $request->email;
+    $user->phone = $request->phone;
+    $user->bio   = $request->bio;
     $user->save();
     return response()->json([
         'status' => '200',
