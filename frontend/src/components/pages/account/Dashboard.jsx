@@ -1,26 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../../common/Layout';
 import UserSidebar from '../../common/UserSidebar';
-import { useAuth } from '../../context/Auth';
-import axios from 'axios';
+import { AuthContext } from '../../context/Auth';
+import { apiUrl, token } from '../../common/Config';
 
 const Dashboard = () => {
-  const { token, role } = useAuth();
+  const { user } = useContext(AuthContext);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios
-      .get(`${import.meta.env.VITE_API_BASE_URL}/api/account/stats`, {
-        headers: { Authorization: `Bearer ${token}` },
+    fetch(`${apiUrl}/account/stats`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status === '200') setStats(result.data);
       })
-      .then((res) => setStats(res.data.data))
       .catch(() => setStats(null))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, []);
 
-  const isInstructor = role === 'instructor';
+  const isInstructor = user?.role === 'instructor';
 
   return (
     <Layout>
