@@ -26,7 +26,7 @@ const Detail = () => {
 
   const fetchCourses = () => {
     setLoading(true);
-    fetch(`${apiUrl}/fetch-course/${params.id}`, {
+    fetch(`${apiUrl}/fetch-course/${params.slug}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

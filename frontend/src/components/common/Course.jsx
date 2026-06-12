@@ -80,7 +80,7 @@ const Course = ({ course, customClasses }) => {
             {course.price && <div className='price'>{course.price} €</div>}
 
             <div className='add-to-cart'>
-              <Link to={`/detail/${course.id}`} className='btn btn-primary'>
+              <Link to={`/detail/${course.slug}`} className='btn btn-primary'>
                 En savoir plus
               </Link>
             </div>

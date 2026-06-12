@@ -124,8 +124,8 @@ class HomeController extends Controller
         
     }
 
-    public function course($id){
-        $course = Course::where('id', $id)
+    public function course($slug){
+        $course = Course::where('slug', $slug)
         ->withCount('enrollments')
         ->withCount('reviews')
         ->withSum('reviews', 'rating')

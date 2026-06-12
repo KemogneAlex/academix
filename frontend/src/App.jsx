@@ -26,7 +26,7 @@ function App() {
           {/* ── Pages publiques ── */}
           <Route path='/' element={<Home />} />
           <Route path='/courses' element={<Courses />} />
-          <Route path='/detail/:id' element={<Detail />} />
+          <Route path='/detail/:slug' element={<Detail />} />
           <Route path='/account/login' element={<Login />} />
           <Route path='/account/register' element={<Register />} />
 
