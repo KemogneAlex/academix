@@ -23,6 +23,8 @@ const EditLesson = ({ placeholder }) => {
   const editor = useRef(null);
   const [content, setContent] = useState('');
   const [checked, setChecked] = useState(false);
+  const [videoType, setVideoType] = useState('upload');
+  const [externalUrl, setExternalUrl] = useState('');
 
   const config = useMemo(
     () => ({
@@ -65,7 +67,9 @@ const EditLesson = ({ placeholder }) => {
         duration: data.duration,
         status: data.status,
         free_preview: checked,
-        description: content
+        description: content,
+        video_type: videoType,
+        video_url_external: videoType !== 'upload' ? externalUrl : null,
       };
       
       console.log('Données envoyées au serveur:', dataToSend);
@@ -133,7 +137,8 @@ const EditLesson = ({ placeholder }) => {
 
         if (lessonResult.status === '200') {
           setLesson(lessonResult.data);
-          // Mettre à jour le formulaire avec les données de la leçon
+          setVideoType(lessonResult.data.video_type ?? 'upload');
+          setExternalUrl(lessonResult.data.video_url_external ?? '');
           reset({
             lesson: lessonResult.data.title,
             chapter_id: lessonResult.data.chapter_id,
@@ -295,7 +300,12 @@ const EditLesson = ({ placeholder }) => {
                     </form>
                   </div>
                   <div className='col-md-4'>
-                    <LessonVideo lesson={lesson} />
+                    <LessonVideo
+                      lesson={lesson}
+                      videoType={videoType}
+                      onVideoTypeChange={setVideoType}
+                      onExternalUrlChange={setExternalUrl}
+                    />
                   </div>
                 </div>
               </div>

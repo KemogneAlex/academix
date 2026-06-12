@@ -90,12 +90,14 @@ class LessonController extends Controller
        }
 
        // Utiliser $request->chapter qui vient du formulaire
-       $lesson->chapter_id = $request->chapter;
-       $lesson->title = $request->lesson;
-       $lesson->is_free_preview = $request->boolean('free_preview') ? 'yes' : 'no';
-       $lesson->duration = $request->duration;
-       $lesson->description = $request->description;
-       $lesson->status = $request->status;
+       $lesson->chapter_id        = $request->chapter;
+       $lesson->title             = $request->lesson;
+       $lesson->is_free_preview   = $request->boolean('free_preview') ? 'yes' : 'no';
+       $lesson->duration          = $request->duration;
+       $lesson->description       = $request->description;
+       $lesson->status            = $request->status;
+       $lesson->video_type        = $request->video_type ?? 'upload';
+       $lesson->video_url_external = $request->video_url_external ?? null;
        $lesson->save();
 
        return response()->json([
