@@ -49,6 +49,7 @@ class AccountController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
+        $user->role = $request->role ?? 'student';
         $user->save();
 
         return response()->json([
@@ -84,7 +85,8 @@ class AccountController extends Controller
                 'status' => '200',
                 'token' => $token,
                 'name' => $user->name,
-                'id'=> Auth::user()->id
+                'id'=> Auth::user()->id,
+                'role' => $user->role ?? 'student'
             ], 200);
             
         }else{
