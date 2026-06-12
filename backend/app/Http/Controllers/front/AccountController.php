@@ -101,6 +101,61 @@ class AccountController extends Controller
         
     }
 
+    public function stats(Request $request)
+    {
+        $userId = $request->user()->id;
+        $role   = $request->user()->role ?? 'student';
+
+        if ($role === 'instructor') {
+            // IDs des cours de ce formateur
+            $courseIds = Course::where('user_id', $userId)->pluck('id');
+
+            $totalCourses      = $courseIds->count();
+            $activeCourses     = Course::where('user_id', $userId)->where('status', 1)->count();
+            $totalEnrollments  = Enrollment::whereIn('course_id', $courseIds)->count();
+            $totalRevenue      = \App\Models\Order::whereIn('course_id', $courseIds)
+                                    ->where('status', 'completed')
+                                    ->sum('amount');
+
+            return response()->json([
+                'status' => '200',
+                'data'   => [
+                    'total_courses'     => $totalCourses,
+                    'active_courses'    => $activeCourses,
+                    'total_enrollments' => $totalEnrollments,
+                    'total_revenue'     => number_format((float) $totalRevenue, 2, '.', ''),
+                ],
+            ], 200);
+        }
+
+        // Student stats
+        $totalEnrollments  = Enrollment::where('user_id', $userId)->count();
+        $totalCertificates = \App\Models\Certificate::where('user_id', $userId)->count();
+
+        // Progression moyenne sur tous les cours suivis
+        $enrolledCourseIds = Enrollment::where('user_id', $userId)->pluck('course_id');
+        $avgProgress = 0;
+        if ($enrolledCourseIds->count() > 0) {
+            $progresses = [];
+            foreach ($enrolledCourseIds as $cid) {
+                $total     = \App\Models\Lesson::whereHas('chapter', fn($q) => $q->where('course_id', $cid))
+                                ->where('status', 1)->whereNotNull('video')->count();
+                $completed = \App\Models\Activity::where(['user_id' => $userId, 'course_id' => $cid, 'is_completed' => 'yes'])->count();
+                $progresses[] = $total > 0 ? round(($completed / $total) * 100) : 0;
+            }
+            $avgProgress = round(array_sum($progresses) / count($progresses));
+        }
+
+        return response()->json([
+            'status' => '200',
+            'data'   => [
+                'total_enrollments'  => $totalEnrollments,
+                'total_certificates' => $totalCertificates,
+                'avg_progress'       => $avgProgress,
+            ],
+        ], 200);
+    }
+
     public function courses(Request $request){
         $courses = Course::where('user_id', $request->user()->id)
         ->withCount('enrollments')
