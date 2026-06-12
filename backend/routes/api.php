@@ -77,6 +77,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('/fetch-user', [AccountController::class, 'fetchUser']);
     Route::post('/update-user', [AccountController::class, 'updateUser']);
     Route::post('/update-password', [AccountController::class, 'updatePassword']);
+    Route::post('/upload-avatar', [AccountController::class, 'uploadAvatar']);
 
     // ── Certificats ────────────────────────────────────────────
     Route::get('/certificates', [CertificateController::class, 'index']);

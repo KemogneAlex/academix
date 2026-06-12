@@ -446,6 +446,50 @@ public function saveRating(Request $request){
     ], 200);
 }
 
+public function uploadAvatar(Request $request){
+    $validator = Validator::make($request->all(), [
+        'avatar' => 'required|mimes:png,jpg,jpeg|max:2048',
+    ], [
+        'avatar.required' => 'Une image est requise.',
+        'avatar.mimes'    => 'Format accepté : JPG, PNG.',
+        'avatar.max'      => 'La taille maximale est 2 Mo.',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json([
+            'status' => '400',
+            'errors' => $validator->errors(),
+        ], 400);
+    }
+
+    $user = User::find($request->user()->id);
+
+    // Supprimer l'ancien avatar
+    if ($user->avatar && \Illuminate\Support\Facades\File::exists(public_path('uploads/avatar/' . $user->avatar))) {
+        \Illuminate\Support\Facades\File::delete(public_path('uploads/avatar/' . $user->avatar));
+    }
+
+    $file     = $request->file('avatar');
+    $ext      = $file->getClientOriginalExtension();
+    $filename = 'avatar-' . $user->id . '-' . time() . '.' . $ext;
+
+    // Créer le dossier si besoin
+    if (!\Illuminate\Support\Facades\File::exists(public_path('uploads/avatar'))) {
+        \Illuminate\Support\Facades\File::makeDirectory(public_path('uploads/avatar'), 0755, true);
+    }
+
+    $file->move(public_path('uploads/avatar'), $filename);
+
+    $user->avatar = $filename;
+    $user->save();
+
+    return response()->json([
+        'status' => '200',
+        'avatar' => $filename,
+        'message' => 'Avatar mis à jour avec succès',
+    ], 200);
+}
+
 public function fetchUser(Request $request){
     $user = User::find($request->user()->id);
    if($user == null){
